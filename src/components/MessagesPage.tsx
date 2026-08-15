@@ -99,6 +99,34 @@ const chats: Chat[] = [
   },
 ]
 
+type GroupItem = {
+  id: string
+  name: string
+  members: number
+  avatarColor: string
+  lastMessage: string
+  time: string
+  unread: number
+}
+
+const groups: GroupItem[] = [
+  { id: "ai-innovators", name: "AI Innovators", members: 248, avatarColor: "bg-purple-600", lastMessage: "Maya: Shared a Bit", time: "Mon", unread: 0 },
+  { id: "builders", name: "Builder Labs Team", members: 34, avatarColor: "bg-orange-600", lastMessage: "Robert: Check this out", time: "Yesterday", unread: 3 },
+  { id: "startup-founders", name: "Startup Founders", members: 512, avatarColor: "bg-green-600", lastMessage: "New pinned message", time: "2d", unread: 0 },
+]
+
+type RequestItem = {
+  id: string
+  name: string
+  avatarColor: string
+  mutualInfo: string
+}
+
+const requests: RequestItem[] = [
+  { id: "jordan", name: "Jordan Lee", avatarColor: "bg-red-500", mutualInfo: "3 mutual connections" },
+  { id: "mia", name: "Mia Torres", avatarColor: "bg-indigo-500", mutualInfo: "Follows you" },
+]
+
 export default function MessagesPage() {
   const [tab, setTab] = useState<"Chats" | "Groups" | "Requests">("Chats")
   const [selectedChat, setSelectedChat] = useState<string | null>(null)
@@ -146,7 +174,7 @@ export default function MessagesPage() {
         </div>
 
         <div className="flex-1 overflow-y-auto">
-          {chats.map((c) => (
+          {tab === "Chats" && chats.map((c) => (
             <button
               key={c.id}
               onClick={() => { setSelectedChat(c.id); setShowInfo(false) }}
@@ -180,6 +208,56 @@ export default function MessagesPage() {
               </div>
             </button>
           ))}
+
+          {tab === "Groups" && groups.map((g) => (
+            <button
+              key={g.id}
+              className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-white/5 transition-colors"
+            >
+              <div className={`w-11 h-11 rounded-full ${g.avatarColor} flex items-center justify-center text-xs font-bold flex-shrink-0`}>
+                {g.name.split(" ").map((w) => w[0]).slice(0, 2).join("")}
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-semibold truncate">{g.name}</span>
+                  <span className="text-[10px] text-gray-500 flex-shrink-0 ml-1">{g.time}</span>
+                </div>
+                <div className="flex items-center justify-between mt-0.5">
+                  <span className="text-xs text-gray-500 truncate">{g.lastMessage}</span>
+                  {g.unread > 0 && (
+                    <span className="bg-cyan-500 text-black text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center flex-shrink-0 ml-1">
+                      {g.unread}
+                    </span>
+                  )}
+                </div>
+                <p className="text-[10px] text-gray-600 mt-0.5">{g.members} members</p>
+              </div>
+            </button>
+          ))}
+
+          {tab === "Requests" && (
+            requests.length === 0 ? (
+              <p className="text-center text-xs text-gray-500 mt-8">No pending requests</p>
+            ) : (
+              requests.map((r) => (
+                <div key={r.id} className="flex items-center gap-3 px-4 py-3">
+                  <div className={`w-11 h-11 rounded-full ${r.avatarColor} flex-shrink-0`} />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold truncate">{r.name}</p>
+                    <p className="text-xs text-gray-500 truncate">{r.mutualInfo}</p>
+                    <div className="flex items-center gap-2 mt-1.5">
+                      <button className="bg-cyan-500 hover:bg-cyan-400 text-black text-[11px] font-semibold px-3 py-1 rounded-md">
+                        Accept
+                      </button>
+                      <button className="bg-white/10 hover:bg-white/20 text-[11px] font-medium px-3 py-1 rounded-md">
+                        Decline
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))
+            )
+          )}
         </div>
       </div>
     )
