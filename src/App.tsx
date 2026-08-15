@@ -13,6 +13,7 @@ import MarketSnapshot from "./components/MarketSnapshot"
 import TopInterests from "./components/TopInterests"
 import Feed from "./components/Feed"
 import AIPage from "./components/AIPage"
+import MessagesPage from "./components/MessagesPage"
 
 function App() {
   const [active, setActive] = useState("Home")
@@ -25,9 +26,14 @@ function App() {
         <Header />
 
         <div className="flex flex-1 min-h-0">
-          {active === "AI" ? (
-            <main className="flex-1 min-w-0 flex flex-col p-8 overflow-hidden">
-              <AIPage />
+          {active === "AI" || active === "Messages" ? (
+            <main className="flex-1 min-w-0 flex flex-col overflow-hidden">
+              {active === "AI" && (
+                <div className="flex-1 flex flex-col p-8 overflow-hidden">
+                  <AIPage />
+                </div>
+              )}
+              {active === "Messages" && <MessagesPage />}
             </main>
           ) : (
             <main className="flex-1 min-w-0 overflow-y-auto p-8">
@@ -50,12 +56,14 @@ function App() {
             </main>
           )}
 
-          <aside className="w-64 flex-shrink-0 overflow-y-auto p-4 border-l border-[#1c2432] flex flex-col gap-4">
-            <TrendingWidget />
-            <LiveUpdatesWidget />
-            <MarketSnapshot />
-            <TopInterests />
-          </aside>
+          {active !== "Messages" && (
+            <aside className="w-64 flex-shrink-0 overflow-y-auto p-4 border-l border-[#1c2432] flex flex-col gap-4">
+              <TrendingWidget />
+              <LiveUpdatesWidget />
+              <MarketSnapshot />
+              <TopInterests />
+            </aside>
+          )}
         </div>
       </div>
     </div>
