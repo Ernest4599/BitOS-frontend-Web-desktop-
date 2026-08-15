@@ -14,6 +14,7 @@ import TopInterests from "./components/TopInterests"
 import Feed from "./components/Feed"
 import AIPage from "./components/AIPage"
 import MessagesPage from "./components/MessagesPage"
+import ProfilePage from "./components/ProfilePage"
 
 function App() {
   const [active, setActive] = useState("Home")
@@ -48,7 +49,8 @@ function App() {
                 </>
               )}
               {active === "Feed" && <Feed />}
-              {active !== "Home" && active !== "Feed" && (
+              {active === "Profile" && <ProfilePage />}
+              {active !== "Home" && active !== "Feed" && active !== "Profile" && (
                 <div className="flex items-center justify-center h-96 text-gray-500 text-sm">
                   {active} page coming soon
                 </div>
