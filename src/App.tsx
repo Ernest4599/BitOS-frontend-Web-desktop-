@@ -17,6 +17,7 @@ import MessagesPage from "./components/MessagesPage"
 import ProfilePage from "./components/ProfilePage"
 import UserProfilePage from "./components/UserProfilePage"
 import ExplorePage from "./components/ExplorePage"
+import SettingsPage from "./components/SettingsPage"
 
 function App() {
   const [active, setActive] = useState("Home")
@@ -74,7 +75,8 @@ function App() {
             }} />}
               {active === "Profile" && <ProfilePage />}
               {active === "Explore" && <ExplorePage />}
-              {active !== "Home" && active !== "Feed" && active !== "Profile" && active !== "Explore" && (
+              {active === "Settings" && <SettingsPage />}
+              {active !== "Home" && active !== "Feed" && active !== "Profile" && active !== "Explore" && active !== "Settings" && (
                 <div className="flex items-center justify-center h-96 text-gray-500 text-sm">
                   {active} page coming soon
                 </div>
@@ -82,7 +84,7 @@ function App() {
             </main>
           )}
 
-          {active !== "Messages" && active !== "Explore" && (
+          {active !== "Messages" && active !== "Explore" && active !== "Settings" && (
             <aside className="w-64 flex-shrink-0 overflow-y-auto p-4 border-l border-[#1c2432] flex flex-col gap-4">
               <TrendingWidget />
               <LiveUpdatesWidget />
