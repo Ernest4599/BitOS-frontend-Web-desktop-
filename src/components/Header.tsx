@@ -1,6 +1,6 @@
 import { Search, Bell, TrendingUp, ChevronDown } from "lucide-react"
 
-export default function Header() {
+export default function Header({ onProfileClick }: { onProfileClick?: () => void }) {
   return (
     <header className="flex items-center gap-4 px-6 py-4 border-b border-[#1c2432]">
       <div className="flex-1 relative">
@@ -26,7 +26,7 @@ export default function Header() {
         <TrendingUp size={18} />
       </button>
 
-      <button className="flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-full hover:bg-white/5">
+      <button onClick={onProfileClick} className="flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-full hover:bg-white/5">
         <div className="w-7 h-7 rounded-full bg-gray-600" />
         <span className="text-sm font-medium">Youngest</span>
         <ChevronDown size={14} className="text-gray-500" />

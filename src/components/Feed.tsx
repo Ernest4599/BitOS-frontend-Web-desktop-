@@ -273,7 +273,17 @@ const initialPosts: Post[] = [
   },
 ]
 
-export default function Feed() {
+function nameToUserId(name: string): string {
+  const map: Record<string, string> = {
+    "Alex Morgan": "alex",
+    "Sarah Chen": "sarah",
+    "Youngest": "youngest",
+    "Youngest Kingston": "youngest",
+  }
+  return map[name] || ""
+}
+
+export default function Feed({ onUserClick }: { onUserClick?: (userId: string) => void }) {
   const [tab, setTab] = useState<"For You" | "Following">("For You")
   const [posts, setPosts] = useState<Post[]>(initialPosts)
   const [text, setText] = useState("")
@@ -698,10 +708,18 @@ export default function Feed() {
             className="bg-[#0f141c] border border-[#1c2432] rounded-2xl p-4 cursor-pointer hover:bg-white/[0.02] transition-colors"
           >
             <div className="flex items-start gap-3">
-              <div className={`w-9 h-9 rounded-full ${p.avatarColor} flex-shrink-0`} />
+              <button
+                onClick={(e) => { e.stopPropagation(); const uid = nameToUserId(p.name); if (uid && onUserClick) onUserClick(uid) }}
+                className={`w-9 h-9 rounded-full ${p.avatarColor} flex-shrink-0`}
+              />
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-1.5">
-                  <span className="text-sm font-semibold">{p.name}</span>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); const uid = nameToUserId(p.name); if (uid && onUserClick) onUserClick(uid) }}
+                    className="text-sm font-semibold hover:underline"
+                  >
+                    {p.name}
+                  </button>
                   {p.badge && (
                     <span className="text-[9px] font-bold border border-cyan-400 text-cyan-400 px-1 rounded">
                       {p.badge}
