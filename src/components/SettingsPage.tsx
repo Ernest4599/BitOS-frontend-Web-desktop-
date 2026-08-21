@@ -1,4 +1,4 @@
-import { User, CreditCard, Crown, Brain, Shield, Sliders, HelpCircle, FileText, LogOut, Fingerprint, AtSign, Lock, Sparkles, ChevronRight, Copy, Mail, Phone, Smartphone, Trash2, PauseCircle, ArrowLeft, UserCheck, Lightbulb, MapPin, CheckCircle2, Gift, Headphones, History } from "lucide-react"
+import { User, CreditCard, Crown, Brain, Shield, Sliders, HelpCircle, FileText, LogOut, Fingerprint, AtSign, Lock, Sparkles, ChevronRight, Copy, Mail, Phone, Smartphone, Trash2, PauseCircle, ArrowLeft, UserCheck, Lightbulb, MapPin, CheckCircle2, Gift, Headphones, History, Check, Plus, Search, Download, Filter } from "lucide-react"
 import { useState } from "react"
 
 const categories = [
@@ -29,7 +29,7 @@ const categories = [
 
 export default function SettingsPage() {
   const [activeCategory, setActiveCategory] = useState("account")
-  const [view, setView] = useState<"account" | "profileId" | "contactInfo" | "billing">("account")
+  const [view, setView] = useState<"account" | "profileId" | "contactInfo" | "billing" | "currentPlan" | "paymentMethods" | "billingInfo" | "billingHistory">("account")
 
   function CategorySidebar() {
     return (
@@ -230,15 +230,13 @@ export default function SettingsPage() {
   function BillingContent() {
     return (
       <div className="max-w-2xl">
-        <button onClick={() => setView("account")} className="flex items-center gap-2 text-gray-400 hover:text-white text-xs mb-4">
-          <ArrowLeft size={16} />
-          Back
-        </button>
-
         <h2 className="text-xl font-bold">Billing</h2>
         <p className="text-sm text-gray-500 mt-1">Manage your payment methods, billing information and view your billing history.</p>
 
-        <div className="bg-[#0f141c] border border-[#1c2432] rounded-xl p-4 mt-5 flex items-center justify-between gap-4">
+        <button
+          onClick={() => setView("currentPlan")}
+          className="w-full bg-[#0f141c] border border-[#1c2432] rounded-xl p-4 mt-5 flex items-center justify-between gap-4 text-left hover:bg-white/[0.02]"
+        >
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-purple-500/10 flex items-center justify-center text-purple-400 flex-shrink-0">
               <Gift size={18} />
@@ -252,9 +250,12 @@ export default function SettingsPage() {
             <p className="text-sm font-semibold">bitOS Free</p>
             <p className="text-xs text-gray-500">₦0 / month</p>
           </div>
-        </div>
+        </button>
 
-        <div className="bg-[#0f141c] border border-[#1c2432] rounded-xl p-4 mt-3 flex items-center justify-between gap-4">
+        <button
+          onClick={() => setView("paymentMethods")}
+          className="w-full bg-[#0f141c] border border-[#1c2432] rounded-xl p-4 mt-3 flex items-center justify-between gap-4 text-left hover:bg-white/[0.02]"
+        >
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-400 flex-shrink-0">
               <CreditCard size={18} />
@@ -265,9 +266,12 @@ export default function SettingsPage() {
             </div>
           </div>
           <span className="text-xs text-red-400 flex-shrink-0">No method added</span>
-        </div>
+        </button>
 
-        <div className="bg-[#0f141c] border border-[#1c2432] rounded-xl p-4 mt-3 flex items-center justify-between gap-4">
+        <button
+          onClick={() => setView("billingInfo")}
+          className="w-full bg-[#0f141c] border border-[#1c2432] rounded-xl p-4 mt-3 flex items-center justify-between gap-4 text-left hover:bg-white/[0.02]"
+        >
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-green-500/10 flex items-center justify-center text-green-400 flex-shrink-0">
               <FileText size={18} />
@@ -278,9 +282,12 @@ export default function SettingsPage() {
             </div>
           </div>
           <span className="text-xs text-gray-500 flex-shrink-0">Not added</span>
-        </div>
+        </button>
 
-        <div className="bg-[#0f141c] border border-[#1c2432] rounded-xl p-4 mt-3 flex items-center justify-between gap-4">
+        <button
+          onClick={() => setView("billingHistory")}
+          className="w-full bg-[#0f141c] border border-[#1c2432] rounded-xl p-4 mt-3 flex items-center justify-between gap-4 text-left hover:bg-white/[0.02]"
+        >
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-orange-500/10 flex items-center justify-center text-orange-400 flex-shrink-0">
               <History size={18} />
@@ -291,7 +298,7 @@ export default function SettingsPage() {
             </div>
           </div>
           <span className="text-xs text-gray-500 flex-shrink-0">No history yet</span>
-        </div>
+        </button>
 
         <div className="bg-white/5 rounded-xl p-4 mt-3 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
@@ -304,6 +311,205 @@ export default function SettingsPage() {
           <button className="border border-cyan-400/40 text-cyan-400 text-xs font-medium px-3 py-1.5 rounded-lg flex-shrink-0 hover:bg-cyan-400/10">
             Contact Support
           </button>
+        </div>
+      </div>
+    )
+  }
+
+  function CurrentPlanContent() {
+    return (
+      <div className="max-w-2xl">
+        <button onClick={() => setView("billing")} className="flex items-center gap-2 text-gray-400 hover:text-white text-xs mb-4">
+          <ArrowLeft size={16} />
+          Back
+        </button>
+
+        <h2 className="text-xl font-bold">Current Plan</h2>
+        <p className="text-sm text-gray-500 mt-1">View your current plan and upgrade anytime.</p>
+
+        <div className="flex gap-4 mt-5 flex-wrap">
+          <div className="flex-1 min-w-[240px] bg-[#0f141c] border border-[#1c2432] rounded-xl p-5">
+            <p className="text-xs text-gray-500">Your current plan</p>
+            <p className="text-lg font-bold mt-1">bitOS Free</p>
+            <p className="text-2xl font-bold mt-2">₦0<span className="text-sm text-gray-500 font-normal"> / month</span></p>
+
+            <div className="flex flex-col gap-2 mt-4">
+              <div className="flex items-center gap-2 text-sm text-gray-300">
+                <Check size={14} className="text-green-400" />
+                Access to bitOS feed
+              </div>
+              <div className="flex items-center gap-2 text-sm text-gray-300">
+                <Check size={14} className="text-green-400" />
+                Basic AI assistance (limited)
+              </div>
+              <div className="flex items-center gap-2 text-sm text-gray-300">
+                <Check size={14} className="text-green-400" />
+                Community access
+              </div>
+              <div className="flex items-center gap-2 text-sm text-gray-300">
+                <Check size={14} className="text-green-400" />
+                Standard support
+              </div>
+            </div>
+          </div>
+
+          <div className="flex-1 min-w-[240px] bg-[#0f141c] border border-[#1c2432] rounded-xl p-5">
+            <Gift size={24} className="text-purple-400" />
+            <p className="text-sm font-semibold mt-3">Unlock more with bitOS Pro</p>
+            <p className="text-xs text-gray-500 mt-1">Get access to advanced AI, personalization, priority support and more.</p>
+            <button className="w-full bg-cyan-500 hover:bg-cyan-400 text-black text-sm font-semibold py-2.5 rounded-lg mt-4">
+              Upgrade to bitOS Pro
+            </button>
+            <button className="text-xs text-cyan-400 mt-2">Learn more about Pro →</button>
+          </div>
+        </div>
+
+        <div className="bg-[#0f141c] border border-[#1c2432] rounded-xl p-4 mt-3 flex items-center justify-between">
+          <div>
+            <p className="text-sm font-medium">Next billing date</p>
+            <p className="text-xs text-gray-500">You're on the Free plan.</p>
+          </div>
+          <span className="text-sm font-semibold">₦0 will be charged</span>
+        </div>
+      </div>
+    )
+  }
+
+  function PaymentMethodsContent() {
+    return (
+      <div className="max-w-2xl">
+        <button onClick={() => setView("billing")} className="flex items-center gap-2 text-gray-400 hover:text-white text-xs mb-4">
+          <ArrowLeft size={16} />
+          Back
+        </button>
+
+        <h2 className="text-xl font-bold">Payment Methods</h2>
+        <p className="text-sm text-gray-500 mt-1">Add, edit or remove your payment methods.</p>
+
+        <div className="bg-[#0f141c] border border-[#1c2432] rounded-xl mt-5 py-16 flex flex-col items-center text-center px-6">
+          <div className="w-14 h-14 rounded-xl bg-purple-500/10 flex items-center justify-center mb-4">
+            <CreditCard size={26} className="text-purple-400" />
+          </div>
+          <h3 className="text-base font-semibold">No payment method added</h3>
+          <p className="text-sm text-gray-500 mt-1 max-w-xs">Add a payment method for subscriptions and purchases.</p>
+          <button className="flex items-center gap-2 bg-cyan-500 hover:bg-cyan-400 text-black text-sm font-semibold px-4 py-2.5 rounded-lg mt-5">
+            <Plus size={15} />
+            Add payment method
+          </button>
+        </div>
+
+        <div className="flex items-center gap-2 text-xs text-gray-500 mt-3">
+          <Shield size={13} />
+          Your payment information is secure and encrypted.
+        </div>
+      </div>
+    )
+  }
+
+  function BillingInfoContent() {
+    return (
+      <div className="max-w-2xl">
+        <button onClick={() => setView("billing")} className="flex items-center gap-2 text-gray-400 hover:text-white text-xs mb-4">
+          <ArrowLeft size={16} />
+          Back
+        </button>
+
+        <h2 className="text-xl font-bold">Billing Information</h2>
+        <p className="text-sm text-gray-500 mt-1">Manage your billing name, email and address.</p>
+
+        <div className="bg-[#0f141c] border border-[#1c2432] rounded-xl mt-5 py-16 flex flex-col items-center text-center px-6">
+          <div className="w-14 h-14 rounded-xl bg-green-500/10 flex items-center justify-center mb-4">
+            <FileText size={26} className="text-green-400" />
+          </div>
+          <h3 className="text-base font-semibold">No billing information added</h3>
+          <p className="text-sm text-gray-500 mt-1 max-w-xs">Add your billing name, email and address for invoices.</p>
+          <button className="flex items-center gap-2 bg-cyan-500 hover:bg-cyan-400 text-black text-sm font-semibold px-4 py-2.5 rounded-lg mt-5">
+            <Plus size={15} />
+            Add billing information
+          </button>
+        </div>
+
+        <div className="flex items-center gap-2 text-xs text-gray-500 mt-3">
+          <Shield size={13} />
+          This information is used for billing and invoice purposes only.
+        </div>
+      </div>
+    )
+  }
+
+  function BillingHistoryContent() {
+    return (
+      <div className="max-w-2xl">
+        <button onClick={() => setView("billing")} className="flex items-center gap-2 text-gray-400 hover:text-white text-xs mb-4">
+          <ArrowLeft size={16} />
+          Back
+        </button>
+
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-xl font-bold">Billing History</h2>
+            <p className="text-sm text-gray-500 mt-1">View your invoices and transaction history.</p>
+          </div>
+          <button className="flex items-center gap-2 border border-cyan-400/40 text-cyan-400 text-xs font-medium px-3 py-2 rounded-lg hover:bg-cyan-400/10 flex-shrink-0">
+            <Download size={14} />
+            Download all
+          </button>
+        </div>
+
+        <div className="relative mt-4">
+          <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
+          <input
+            type="text"
+            placeholder="Search invoices..."
+            className="w-full bg-[#0f141c] border border-[#1c2432] rounded-lg py-2 pl-9 pr-4 text-sm placeholder-gray-500 focus:outline-none"
+          />
+        </div>
+
+        <div className="bg-[#0f141c] border border-[#1c2432] rounded-xl mt-3 py-16 flex flex-col items-center text-center px-6">
+          <div className="w-14 h-14 rounded-xl bg-orange-500/10 flex items-center justify-center mb-4">
+            <History size={26} className="text-orange-400" />
+          </div>
+          <h3 className="text-base font-semibold">No invoices to display</h3>
+          <p className="text-sm text-gray-500 mt-1 max-w-xs">Your billing history will appear here once you have transactions.</p>
+        </div>
+      </div>
+    )
+  }
+
+  function BillingHistoryContent() {
+    return (
+      <div className="max-w-2xl">
+        <button onClick={() => setView("billing")} className="flex items-center gap-2 text-gray-400 hover:text-white text-xs mb-4">
+          <ArrowLeft size={16} />
+          Back
+        </button>
+
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-xl font-bold">Billing History</h2>
+            <p className="text-sm text-gray-500 mt-1">View your invoices and transaction history.</p>
+          </div>
+          <button className="flex items-center gap-2 border border-cyan-400/40 text-cyan-400 text-xs font-medium px-3 py-2 rounded-lg hover:bg-cyan-400/10 flex-shrink-0">
+            <Download size={14} />
+            Download all
+          </button>
+        </div>
+
+        <div className="relative mt-4">
+          <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
+          <input
+            type="text"
+            placeholder="Search invoices..."
+            className="w-full bg-[#0f141c] border border-[#1c2432] rounded-lg py-2 pl-9 pr-4 text-sm placeholder-gray-500 focus:outline-none"
+          />
+        </div>
+
+        <div className="bg-[#0f141c] border border-[#1c2432] rounded-xl mt-3 py-16 flex flex-col items-center text-center px-6">
+          <div className="w-14 h-14 rounded-xl bg-orange-500/10 flex items-center justify-center mb-4">
+            <History size={26} className="text-orange-400" />
+          </div>
+          <h3 className="text-base font-semibold">No invoices to display</h3>
+          <p className="text-sm text-gray-500 mt-1 max-w-xs">Your billing history will appear here once you have transactions.</p>
         </div>
       </div>
     )
@@ -422,6 +628,10 @@ export default function SettingsPage() {
       {view === "profileId" && <ProfileIdContent />}
       {view === "contactInfo" && <ContactInfoContent />}
       {view === "billing" && <BillingContent />}
+      {view === "currentPlan" && <CurrentPlanContent />}
+      {view === "paymentMethods" && <PaymentMethodsContent />}
+      {view === "billingInfo" && <BillingInfoContent />}
+      {view === "billingHistory" && <BillingHistoryContent />}
     </div>
   )
 }
