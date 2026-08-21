@@ -1,8 +1,26 @@
-import { Search, Bell, TrendingUp, ChevronDown } from "lucide-react"
+import { Search, Bell, TrendingUp, ChevronDown, Menu } from "lucide-react"
 
-export default function Header({ onProfileClick }: { onProfileClick?: () => void }) {
+type HeaderProps = {
+  onProfileClick?: () => void
+  showMenuToggle?: boolean
+  onMenuToggle?: () => void
+}
+
+export default function Header({ onProfileClick, showMenuToggle, onMenuToggle }: HeaderProps) {
   return (
     <header className="flex items-center gap-4 px-6 py-4 border-b border-[#1c2432]">
+      {showMenuToggle && (
+        <button
+          onClick={(e) => { e.stopPropagation(); onMenuToggle?.() }}
+          className="flex items-center gap-2 flex-shrink-0"
+        >
+          <Menu size={20} className="text-gray-300" />
+          <span className="text-lg font-bold">
+            bit<span className="text-cyan-400">OS</span>
+          </span>
+        </button>
+      )}
+
       <div className="flex-1 relative">
         <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" />
         <input

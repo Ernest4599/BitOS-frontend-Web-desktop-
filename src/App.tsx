@@ -22,11 +22,24 @@ import SettingsPage from "./components/SettingsPage"
 function App() {
   const [active, setActive] = useState("Home")
   const [viewingUser, setViewingUser] = useState<string | null>(null)
+  const [sidebarOpen, setSidebarOpen] = useState(false)
+
+  const isCollapsible = active === "Home" || active === "Feed"
+  const showSidebar = !isCollapsible || sidebarOpen
+
+  function handleSelect(s: string) {
+    setActive(s)
+    setSidebarOpen(false)
+  }
+
+  function handleMainClick() {
+    if (isCollapsible && sidebarOpen) setSidebarOpen(false)
+  }
 
   if (viewingUser) {
     return (
       <div className="flex h-screen bg-[#0a0e14] text-white overflow-hidden">
-        <Sidebar active={active} onSelect={(s) => { setActive(s); setViewingUser(null) }} />
+        <Sidebar active={active} onSelect={(s) => { handleSelect(s); setViewingUser(null) }} />
         <div className="flex-1 flex flex-col min-w-0 h-screen">
           <Header onProfileClick={() => { setActive("Profile"); setViewingUser(null) }} />
           <main className="flex-1 min-w-0 overflow-y-auto p-8">
@@ -38,11 +51,21 @@ function App() {
   }
 
   return (
-    <div className="flex h-screen bg-[#0a0e14] text-white overflow-hidden">
-      <Sidebar active={active} onSelect={setActive} />
+    <div className="flex h-screen bg-[#0a0e14] text-white overflow-hidden relative">
+      {!isCollapsible && showSidebar && <Sidebar active={active} onSelect={handleSelect} />}
+      {isCollapsible && sidebarOpen && (
+        <div className="fixed inset-0 z-50 flex">
+          <Sidebar active={active} onSelect={handleSelect} />
+          <div className="flex-1" onClick={() => setSidebarOpen(false)} />
+        </div>
+      )}
 
       <div className="flex-1 flex flex-col min-w-0 h-screen">
-        <Header onProfileClick={() => setActive("Profile")} />
+        <Header
+          onProfileClick={() => setActive("Profile")}
+          showMenuToggle={isCollapsible}
+          onMenuToggle={() => setSidebarOpen(!sidebarOpen)}
+        />
 
         <div className="flex flex-1 min-h-0">
           {active === "AI" || active === "Messages" ? (
@@ -56,6 +79,7 @@ function App() {
             </main>
           ) : (
             <main className="flex-1 min-w-0 overflow-y-auto p-8">
+              <div className="max-w-3xl mx-auto">
               {active === "Home" && (
                 <>
                   <DailyBrief />
@@ -67,12 +91,12 @@ function App() {
                 </>
               )}
               {active === "Feed" && <Feed onUserClick={(uid) => {
-              if (uid === "youngest") {
-                setActive("Profile")
-              } else {
-                setViewingUser(uid)
-              }
-            }} />}
+                if (uid === "youngest") {
+                  setActive("Profile")
+                } else {
+                  setViewingUser(uid)
+                }
+              }} />}
               {active === "Profile" && <ProfilePage />}
               {active === "Explore" && <ExplorePage />}
               {active === "Settings" && <SettingsPage />}
@@ -81,6 +105,7 @@ function App() {
                   {active} page coming soon
                 </div>
               )}
+              </div>
             </main>
           )}
 

@@ -120,16 +120,16 @@ function Carousel({ media, maxHeight }: { media: MediaItem[]; maxHeight: string 
 
   return (
     <div
-      className="relative mt-3 rounded-xl overflow-hidden bg-black/20 touch-pan-y"
+      className="relative mt-3 rounded-xl overflow-hidden touch-pan-y"
       onClick={(e) => e.stopPropagation()}
       onTouchStart={onTouchStart}
       onTouchMove={onTouchMove}
       onTouchEnd={onTouchEnd}
     >
       {current.type === "image" ? (
-        <img src={current.url} className={`w-full h-auto ${maxHeight} object-contain select-none`} draggable={false} />
+        <img src={current.url} className="block w-full h-auto select-none" draggable={false} />
       ) : (
-        <video src={current.url} controls className={`w-full h-auto ${maxHeight} object-contain`} />
+        <video src={current.url} controls className="block w-full h-auto" />
       )}
 
       {media.length > 1 && (
@@ -525,7 +525,7 @@ export default function Feed({ onUserClick }: { onUserClick?: (userId: string) =
           <p className="text-xs text-cyan-400 mt-2">{p.category}</p>
           {p.text && <p className="text-base mt-3 leading-relaxed">{p.text}</p>}
 
-          {p.media && <Carousel media={p.media} maxHeight="max-h-[500px]" />}
+          {p.media && <Carousel media={p.media} maxHeight="max-h-[400px]" />}
 
           <div className="flex items-center gap-6 mt-4 pt-3 border-t border-[#1c2432]">
             <div className="flex items-center gap-1.5 text-xs text-gray-500">
@@ -730,7 +730,7 @@ export default function Feed({ onUserClick }: { onUserClick?: (userId: string) =
                 <p className="text-xs text-cyan-400 mt-0.5">{p.category}</p>
                 {p.text && <p className="text-sm mt-2 leading-relaxed">{p.text}</p>}
 
-                {p.media && <Carousel media={p.media} maxHeight="max-h-[500px]" />}
+                {p.media && <Carousel media={p.media} maxHeight="max-h-[400px]" />}
 
                 <div className="flex items-center gap-6 mt-3" onClick={(e) => e.stopPropagation()}>
                   <button
