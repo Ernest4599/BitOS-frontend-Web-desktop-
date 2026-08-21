@@ -1,4 +1,4 @@
-import { MessageCircle, Heart, Repeat2, Bookmark, Image as ImageIcon, ListOrdered, Smile, X, ArrowLeft, ChevronLeft, ChevronRight } from "lucide-react"
+import { MessageCircle, Heart, Repeat2, Bookmark, Image as ImageIcon, ListOrdered, Smile, X, ArrowLeft, ChevronLeft, ChevronRight, Plus } from "lucide-react"
 import { useState, useRef } from "react"
 
 type MediaItem = {
@@ -293,6 +293,7 @@ export default function Feed({ onUserClick }: { onUserClick?: (userId: string) =
   const [selectedPost, setSelectedPost] = useState<number | null>(null)
   const [replyPath, setReplyPath] = useState<string[]>([])
   const [replyText, setReplyText] = useState("")
+  const [composeOpen, setComposeOpen] = useState(false)
 
   function handleMediaPick(e: React.ChangeEvent<HTMLInputElement>) {
     const files = e.target.files
@@ -338,6 +339,7 @@ export default function Feed({ onUserClick }: { onUserClick?: (userId: string) =
     setText("")
     setMediaPreviews([])
     setPreviewIndex(0)
+    setComposeOpen(false)
   }
 
   function toggleLike(index: number) {
@@ -601,33 +603,64 @@ export default function Feed({ onUserClick }: { onUserClick?: (userId: string) =
     <div>
       <h1 className="text-3xl font-bold">Feed</h1>
 
-      <div className="flex items-center gap-6 mt-4 border-b border-[#1c2432]">
-        {(["For You", "Following"] as const).map((t) => (
-          <button
-            key={t}
-            onClick={() => setTab(t)}
-            className={`pb-2 text-sm font-medium border-b-2 transition-colors ${
-              tab === t ? "text-cyan-400 border-cyan-400" : "text-gray-500 border-transparent hover:text-gray-300"
-            }`}
-          >
-            {t}
-          </button>
-        ))}
+      <div className="flex items-center justify-between gap-6 mt-4 border-b border-[#1c2432]">
+        <div className="flex items-center gap-6">
+          {(["For You", "Following"] as const).map((t) => (
+            <button
+              key={t}
+              onClick={() => setTab(t)}
+              className={`pb-2 text-sm font-medium border-b-2 transition-colors ${
+                tab === t ? "text-cyan-400 border-cyan-400" : "text-gray-500 border-transparent hover:text-gray-300"
+              }`}
+            >
+              {t}
+            </button>
+          ))}
+        </div>
+        <button
+          onClick={() => setComposeOpen(true)}
+          className="w-8 h-8 flex items-center justify-center rounded-full bg-cyan-500 hover:bg-cyan-400 text-black mb-2 flex-shrink-0"
+        >
+          <Plus size={16} />
+        </button>
       </div>
 
-      <div className="mt-4 bg-[#0f141c] border border-[#1c2432] rounded-2xl p-4">
-        <div className="flex gap-3">
-          <div className="w-9 h-9 rounded-full bg-gray-600 flex-shrink-0" />
-          <input
-            type="text"
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-            placeholder="What's on your mind?"
-            className="flex-1 bg-transparent text-sm placeholder-gray-500 focus:outline-none"
-          />
-        </div>
+      <button
+        onClick={() => setComposeOpen(true)}
+        className="w-full mt-4 bg-[#0f141c] border border-[#1c2432] rounded-2xl p-4 flex items-center gap-3 text-left"
+      >
+        <div className="w-9 h-9 rounded-full bg-gray-600 flex-shrink-0" />
+        <span className="text-sm text-gray-500">What's on your mind?</span>
+      </button>
 
-        {mediaPreviews.length > 0 && (
+      {composeOpen && (
+        <div className="fixed inset-0 z-50 bg-[#0a0e14] flex flex-col">
+          <div className="flex items-center justify-between px-4 py-3 border-b border-[#1c2432]">
+            <button onClick={() => setComposeOpen(false)} className="text-gray-400 hover:text-white">
+              <X size={22} />
+            </button>
+            <button
+              onClick={handlePublish}
+              className="bg-cyan-500 hover:bg-cyan-400 text-black text-sm font-semibold px-5 py-2 rounded-full transition-colors"
+            >
+              Publish Bit
+            </button>
+          </div>
+
+          <div className="flex-1 overflow-y-auto p-4">
+            <div className="flex gap-3">
+              <div className="w-10 h-10 rounded-full bg-gray-600 flex-shrink-0" />
+              <textarea
+                autoFocus
+                value={text}
+                onChange={(e) => setText(e.target.value)}
+                placeholder="What's on your mind?"
+                rows={4}
+                className="flex-1 bg-transparent text-base placeholder-gray-500 focus:outline-none resize-none"
+              />
+            </div>
+
+            {mediaPreviews.length > 0 && (
           <div className="mt-3">
             <div className="relative rounded-xl overflow-hidden bg-black/20">
               {mediaPreviews[previewIndex].type === "image" ? (
@@ -668,17 +701,17 @@ export default function Feed({ onUserClick }: { onUserClick?: (userId: string) =
           </div>
         )}
 
-        <input
-          type="file"
-          accept="image/*,video/*"
-          multiple
-          ref={fileInputRef}
-          onChange={handleMediaPick}
-          className="hidden"
-        />
+            <input
+              type="file"
+              accept="image/*,video/*"
+              multiple
+              ref={fileInputRef}
+              onChange={handleMediaPick}
+              className="hidden"
+            />
+          </div>
 
-        <div className="flex items-center justify-between mt-3">
-          <div className="flex items-center gap-3 text-gray-500">
+          <div className="flex items-center gap-3 text-gray-500 px-4 py-3 border-t border-[#1c2432]">
             <button
               onClick={() => fileInputRef.current?.click()}
               disabled={mediaPreviews.length >= 10}
@@ -691,14 +724,8 @@ export default function Feed({ onUserClick }: { onUserClick?: (userId: string) =
             <ListOrdered size={16} />
             <Smile size={16} />
           </div>
-          <button
-            onClick={handlePublish}
-            className="bg-cyan-500 hover:bg-cyan-400 text-black text-xs font-semibold px-4 py-1.5 rounded-lg transition-colors"
-          >
-            Publish Bit
-          </button>
         </div>
-      </div>
+      )}
 
       <div className="mt-4 flex flex-col gap-3">
         {posts.map((p, i) => (

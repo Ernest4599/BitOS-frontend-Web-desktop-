@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { Routes, Route, useNavigate, useLocation, useParams } from "react-router-dom"
 import Sidebar from "./components/Sidebar"
 import Header from "./components/Header"
 import DailyBrief from "./components/DailyBrief"
@@ -19,40 +20,43 @@ import UserProfilePage from "./components/UserProfilePage"
 import ExplorePage from "./components/ExplorePage"
 import SettingsPage from "./components/SettingsPage"
 
-function App() {
-  const [active, setActive] = useState("Home")
-  const [viewingUser, setViewingUser] = useState<string | null>(null)
+const pathToLabel: Record<string, string> = {
+  "/": "Home",
+  "/feed": "Feed",
+  "/ai": "AI",
+  "/messages": "Messages",
+  "/profile": "Profile",
+  "/explore": "Explore",
+  "/settings": "Settings",
+}
+
+const labelToPath: Record<string, string> = {
+  Home: "/",
+  Feed: "/feed",
+  AI: "/ai",
+  Messages: "/messages",
+  Profile: "/profile",
+  Explore: "/explore",
+  Settings: "/settings",
+}
+
+function AppLayout({ children }: { children: React.ReactNode }) {
+  const navigate = useNavigate()
+  const location = useLocation()
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
+  const active = pathToLabel[location.pathname] || (location.pathname.startsWith("/profile/") ? "Profile" : "Home")
   const isCollapsible = active === "Home" || active === "Feed"
-  const showSidebar = !isCollapsible || sidebarOpen
+  const showSidebar = !isCollapsible
 
-  function handleSelect(s: string) {
-    setActive(s)
+  function handleSelect(label: string) {
+    navigate(labelToPath[label] || "/")
     setSidebarOpen(false)
-  }
-
-  function handleMainClick() {
-    if (isCollapsible && sidebarOpen) setSidebarOpen(false)
-  }
-
-  if (viewingUser) {
-    return (
-      <div className="flex h-screen bg-[#0a0e14] text-white overflow-hidden">
-        <Sidebar active={active} onSelect={(s) => { handleSelect(s); setViewingUser(null) }} />
-        <div className="flex-1 flex flex-col min-w-0 h-screen">
-          <Header onProfileClick={() => { setActive("Profile"); setViewingUser(null) }} />
-          <main className="flex-1 min-w-0 overflow-y-auto p-8">
-            <UserProfilePage userId={viewingUser} onBack={() => setViewingUser(null)} />
-          </main>
-        </div>
-      </div>
-    )
   }
 
   return (
     <div className="flex h-screen bg-[#0a0e14] text-white overflow-hidden relative">
-      {!isCollapsible && showSidebar && <Sidebar active={active} onSelect={handleSelect} />}
+      {showSidebar && <Sidebar active={active} onSelect={handleSelect} />}
       {isCollapsible && sidebarOpen && (
         <div className="fixed inset-0 z-50 flex">
           <Sidebar active={active} onSelect={handleSelect} />
@@ -62,64 +66,137 @@ function App() {
 
       <div className="flex-1 flex flex-col min-w-0 h-screen">
         <Header
-          onProfileClick={() => setActive("Profile")}
+          onProfileClick={() => navigate("/profile")}
           showMenuToggle={isCollapsible}
           onMenuToggle={() => setSidebarOpen(!sidebarOpen)}
         />
-
-        <div className="flex flex-1 min-h-0">
-          {active === "AI" || active === "Messages" ? (
-            <main className="flex-1 min-w-0 flex flex-col overflow-hidden">
-              {active === "AI" && (
-                <div className="flex-1 flex flex-col p-8 overflow-hidden">
-                  <AIPage />
-                </div>
-              )}
-              {active === "Messages" && <MessagesPage />}
-            </main>
-          ) : (
-            <main className="flex-1 min-w-0 overflow-y-auto p-8">
-              <div className="max-w-3xl mx-auto">
-              {active === "Home" && (
-                <>
-                  <DailyBrief />
-                  <TopStoryCard />
-                  <SuggestionCards />
-                  <RecommendedCards />
-                  <AnalysisCards />
-                  <SummarizeBar />
-                </>
-              )}
-              {active === "Feed" && <Feed onUserClick={(uid) => {
-                if (uid === "youngest") {
-                  setActive("Profile")
-                } else {
-                  setViewingUser(uid)
-                }
-              }} />}
-              {active === "Profile" && <ProfilePage />}
-              {active === "Explore" && <ExplorePage />}
-              {active === "Settings" && <SettingsPage />}
-              {active !== "Home" && active !== "Feed" && active !== "Profile" && active !== "Explore" && active !== "Settings" && (
-                <div className="flex items-center justify-center h-96 text-gray-500 text-sm">
-                  {active} page coming soon
-                </div>
-              )}
-              </div>
-            </main>
-          )}
-
-          {active !== "Messages" && active !== "Explore" && active !== "Settings" && (
-            <aside className="w-64 flex-shrink-0 overflow-y-auto p-4 border-l border-[#1c2432] flex flex-col gap-4">
-              <TrendingWidget />
-              <LiveUpdatesWidget />
-              <MarketSnapshot />
-              <TopInterests />
-            </aside>
-          )}
-        </div>
+        {children}
       </div>
     </div>
+  )
+}
+
+function HomePage() {
+  return (
+    <div className="flex flex-1 min-h-0">
+      <main className="flex-1 min-w-0 overflow-y-auto p-8">
+        <div className="max-w-3xl mx-auto">
+          <DailyBrief />
+          <TopStoryCard />
+          <SuggestionCards />
+          <RecommendedCards />
+          <AnalysisCards />
+          <SummarizeBar />
+        </div>
+      </main>
+      <aside className="w-64 flex-shrink-0 overflow-y-auto p-4 border-l border-[#1c2432] flex flex-col gap-4">
+        <TrendingWidget />
+        <LiveUpdatesWidget />
+        <MarketSnapshot />
+        <TopInterests />
+      </aside>
+    </div>
+  )
+}
+
+function FeedPage() {
+  const navigate = useNavigate()
+  return (
+    <div className="flex flex-1 min-h-0">
+      <main className="flex-1 min-w-0 overflow-y-auto p-8">
+        <div className="max-w-3xl mx-auto">
+          <Feed
+            onUserClick={(uid) => {
+              if (uid === "youngest") navigate("/profile")
+              else navigate(`/profile/${uid}`)
+            }}
+          />
+        </div>
+      </main>
+      <aside className="w-64 flex-shrink-0 overflow-y-auto p-4 border-l border-[#1c2432] flex flex-col gap-4">
+        <TrendingWidget />
+        <LiveUpdatesWidget />
+        <MarketSnapshot />
+        <TopInterests />
+      </aside>
+    </div>
+  )
+}
+
+function AIRoute() {
+  return (
+    <div className="flex flex-1 min-h-0">
+      <main className="flex-1 min-w-0 flex flex-col p-8 overflow-hidden">
+        <AIPage />
+      </main>
+    </div>
+  )
+}
+
+function MessagesRoute() {
+  return (
+    <div className="flex flex-1 min-h-0">
+      <MessagesPage />
+    </div>
+  )
+}
+
+function ProfileRoute() {
+  return (
+    <div className="flex flex-1 min-h-0">
+      <main className="flex-1 min-w-0 overflow-y-auto p-8">
+        <ProfilePage />
+      </main>
+    </div>
+  )
+}
+
+function UserProfileRoute() {
+  const { userId } = useParams()
+  const navigate = useNavigate()
+  return (
+    <div className="flex flex-1 min-h-0">
+      <main className="flex-1 min-w-0 overflow-y-auto p-8">
+        <UserProfilePage userId={userId || ""} onBack={() => navigate(-1)} />
+      </main>
+    </div>
+  )
+}
+
+function ExploreRoute() {
+  return (
+    <div className="flex flex-1 min-h-0">
+      <main className="flex-1 min-w-0 overflow-y-auto p-8">
+        <ExplorePage />
+      </main>
+    </div>
+  )
+}
+
+function SettingsRoute() {
+  return (
+    <div className="flex flex-1 min-h-0">
+      <main className="flex-1 min-w-0 overflow-y-auto p-8">
+        <SettingsPage />
+      </main>
+    </div>
+  )
+}
+
+function App() {
+  return (
+    <AppLayout>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/feed" element={<FeedPage />} />
+        <Route path="/ai" element={<AIRoute />} />
+        <Route path="/messages" element={<MessagesRoute />} />
+        <Route path="/profile" element={<ProfileRoute />} />
+        <Route path="/profile/:userId" element={<UserProfileRoute />} />
+        <Route path="/explore" element={<ExploreRoute />} />
+        <Route path="/settings" element={<SettingsRoute />} />
+      </Routes>
+    </AppLayout>
   )
 }
 
